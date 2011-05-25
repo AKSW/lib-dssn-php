@@ -52,6 +52,8 @@ class DSSN_Utils
 
     /*
      * set the needed constants for all DSSN classes
+     *
+     * @return null
      */
     static public function setConstants() {
         if (defined('DSSN_AAIR_NS')) {
@@ -89,6 +91,8 @@ class DSSN_Utils
 
     /*
      * returns an array of used DSSN namespace/prefix tupels
+     *
+     * @return array
      */
     static public function getNamespaces() {
         DSSN_Utils::setConstants();
@@ -117,6 +121,40 @@ class DSSN_Utils
             if($k == $key) array_push($val, $v);
         });
         return count($val) > 1 ? $val : array_pop($val);
+    }
+
+    /**
+     * register a standard php library autoloader function suitable to autload 
+     * available DSSN classes
+     * http://www.php.net/manual/en/function.spl-autoload.php#103548
+     *
+     * @return null
+     */
+    public static function registerAutoload()
+    {
+        return spl_autoload_register(array(__CLASS__, 'includeClass'));
+    }
+
+    /*
+     * unregister the DSSN autoloader
+     * http://www.php.net/manual/en/function.spl-autoload.php#103548
+     *
+     * @return null
+     */
+    public static function unregisterAutoload()
+    {
+        return spl_autoload_unregister(array(__CLASS__, 'includeClass'));
+    }
+    
+    /*
+     * the used DSSN __autoload function
+     * http://www.php.net/manual/en/function.spl-autoload.php#103548
+     *
+     * @return null
+     */
+    public static function includeClass($class)
+    {
+        require(dirname(__FILE__) . '/../' . strtr($class, '_\\', '//') . '.php');
     }
 
 
