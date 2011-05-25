@@ -2,10 +2,9 @@
 /**
  * An activity object note
  *
- * @category   OntoWiki
- * @package    OntoWiki_extensions_components_dssn
- * @copyright  Copyright (c) 2011, {@link http://aksw.org AKSW}
- * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @author  {@link http://sebastian.tramp.name Sebastian Tramp}
+ * @license http://sam.zoy.org/wtfpl/  Do What The Fuck You Want To Public License (WTFPL)
+ * @seeAlso http://xmlns.notu.be/aair/#term_Note
  */
 class DSSN_Activity_Object_Note extends DSSN_Activity_Object
 {

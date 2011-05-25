@@ -2,10 +2,8 @@
 /**
  * An activity
  *
- * @category   OntoWiki
- * @package    OntoWiki_extensions_components_dssn
- * @copyright  Copyright (c) 2011, {@link http://aksw.org AKSW}
- * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @author  {@link http://sebastian.tramp.name Sebastian Tramp}
+ * @license http://sam.zoy.org/wtfpl/  Do What The Fuck You Want To Public License (WTFPL)
  */
 class DSSN_Activity extends DSSN_Resource
 {
@@ -28,27 +26,6 @@ class DSSN_Activity extends DSSN_Resource
      */
     public function toAtomEntry()
     {
-        /*
-         * maybe later, we can write a Zend Feed Extension
-         * but quick and dirty now with DOM methods...
-         */
-        //$feed = new Zend_Feed_Writer_Feed;
-        //$feed->setTitle('test');
-        //$feed->setDateModified(time());
-        //$feed->setLink('http://www.example.com');
-        //$feed->setFeedLink('http://www.example.com/atom', 'atom');
-        //$entry = $feed->createEntry();
-        //$entry->setTitle($this->getTitle());
-        //$entry->setLink($this->getObject()->getIri());
-        //$entry->addAuthor(array(
-            //'name'  => $this->getActor()->getName(),
-            //'email' => $this->getActor()->getEmail(),
-            //'uri'   => $this->getActor()->getIri(),
-        //));
-        //$entry->setDateModified(new Zend_Date($this->getPublished()));
-        //$entry->setDateCreated(new Zend_Date($this->getPublished()));
-        //$feed->addEntry($entry);
-
         $dom = new DOMDocument('1.0', 'UTF-8');
         $entry = $dom->createElement('entry');
 
