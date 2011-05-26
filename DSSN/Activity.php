@@ -7,10 +7,10 @@
  */
 class DSSN_Activity extends DSSN_Resource
 {
-    private $actor     = null;
-    private $verb      = null;
-    private $object    = null;
-    private $published = null;
+    private $_actor     = null;
+    private $_verb      = null;
+    private $_object    = null;
+    private $_published = null;
 
 
     /*
@@ -72,7 +72,7 @@ class DSSN_Activity extends DSSN_Resource
 
     public function importLiterals(DSSN_Model $model) {
         $iri = $this->getIri();
-        if ($model->countSP( $iri, DSSN_ATOM_published) != 1) {
+        if ($model->countSP($iri, DSSN_ATOM_published) != 1) {
             throw new Exception('need exactly ONE atom:published statement');
         } else {
             $published = $model->getValue($iri, DSSN_ATOM_published);
@@ -111,10 +111,10 @@ EndOfTemplate;
     public function getPublished()
     {
         /* set to current time if not set by now */
-        if ($this->published == null) {
+        if ($this->_published == null) {
             $this->setPublished(date('c', time()));
         }
-        return $this->published;
+        return $this->_published;
     }
     
     /**
@@ -134,7 +134,7 @@ EndOfTemplate;
      */
     public function setPublished($published)
     {
-        $this->published = $published;
+        $this->_published = $published;
     }
 
     /**
@@ -144,7 +144,7 @@ EndOfTemplate;
      */
     public function getActor()
     {
-        return $this->actor;
+        return $this->_actor;
     }
 
     /**
@@ -159,9 +159,10 @@ EndOfTemplate;
             $actor = new DSSN_Activity_Actor_User($actor);
         }
         if ($actor instanceof DSSN_Activity_Actor) {
-            $this->actor = $actor;
+            $this->_actor = $actor;
         } else {
-            throw Exception ('setActor needs an DSSN_Activity_Actor or an IRI string as parameter');
+            throw Exception('setActor needs an DSSN_Activity_Actor'.
+                'or an IRI string as parameter');
         }
     }
 
@@ -172,7 +173,7 @@ EndOfTemplate;
      */
     public function getVerb()
     {
-        return $this->verb;
+        return $this->_verb;
     }
 
     /**
@@ -182,7 +183,7 @@ EndOfTemplate;
      */
     public function setVerb(DSSN_Activity_Verb $verb)
     {
-        $this->verb = $verb;
+        $this->_verb = $verb;
     }
 
     /**
@@ -192,7 +193,7 @@ EndOfTemplate;
      */
     public function getObject()
     {
-        return $this->object;
+        return $this->_object;
     }
 
     /**
@@ -202,7 +203,7 @@ EndOfTemplate;
      */
     public function setObject(DSSN_Activity_Object $object)
     {
-        $this->object = $object;
+        $this->_object = $object;
     }
 
 }
