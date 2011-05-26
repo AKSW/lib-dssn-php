@@ -31,9 +31,6 @@ EndOfTemplate;
     public function toDomElement() {
         $dom = new DOMDocument('1.0', 'UTF-8');
         $verb = $dom->createElementNS('http://activitystrea.ms/spec/1.0/', 'activity:verb', $this->getAtomIri());
-
-        $dom->appendChild($verb);
-        //var_dump($dom->saveXML());
         return $verb;
     }
 

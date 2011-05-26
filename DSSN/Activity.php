@@ -57,7 +57,6 @@ class DSSN_Activity extends DSSN_Resource
         $verb = $this->getVerb()->toDomElement();
         $entry->appendChild($dom->importNode($verb, true));
 
-        $dom->appendChild($entry);
         return $entry;
     }
 

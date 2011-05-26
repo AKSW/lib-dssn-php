@@ -29,7 +29,6 @@ abstract class DSSN_Resource
      * note: iri must be set before this
      */
     public function fetchDirectImports(DSSN_Model $model) {
-        //var_dump($this->getIri(), $this->getDirectImports());
         foreach ($this->getDirectImports() as $propertyIri => $importFunction) {
             $iri = $this->getIri();
             if ($model->hasSP( $iri, $propertyIri)) {

@@ -71,7 +71,6 @@ class DSSN_Model
         if (!$this->hasSP($s, $p)) {
             return 0;
         } else {
-            //var_dump(count($this->statements[$s][$p]));
             return count($this->statements[$s][$p]);
         }
     }

@@ -51,9 +51,11 @@ EndOfTemplate;
         // author->name
         $name = $dom->createElement('name', $this->getName());
         $author->appendChild($name);
+
         // author->uri
         $uri = $dom->createElement('uri', $this->getIri());
         $author->appendChild($uri);
+
         // author->link
         $link = $dom->createElement('link');
         $link->setAttribute("rel", "alternate");
@@ -61,8 +63,6 @@ EndOfTemplate;
         $link->setAttribute("href", $this->getIri());
         $author->appendChild($link);
 
-        $dom->appendChild($author);
-        //var_dump($dom->saveXML());
         return $author;
     }
 
