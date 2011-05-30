@@ -14,11 +14,68 @@ class DSSN_Activity extends DSSN_Resource
 
 
     /*
-     *
+     * generates a non-markuped single string title e.g. for feed usage
      */
     public function getTitle()
     {
-        return "TODO: title";
+        $title  = "";
+        $title .= $this->_actor->getName() . ' ';
+        $title .= $this->_verb->getLabel() . ' ';
+        $title .= 'the following' . ' ';
+        $title .= $this->_object->getTypeLabel() . ': ';
+
+        if (method_exists($this->_object, 'getContent')) {
+            $title .= $this->_object->getContent();
+        } else {
+            $title .= $this->_object->getIri();
+        }
+        return $title;
+    }
+
+    /*
+     * exports a detailed HTML snippet
+     *
+     * TODO: use some template engine engine for this
+     * TODO: return instead of echo
+     */
+    public function toHtml()
+    {
+        $actor    = $this->_actor;
+        $object   = $this->_object;
+        $verb     = $this->_verb;
+        $activity = $this;
+    ?>
+<div class="lib-dssn-php-activity">
+    <span class="subject">
+        <img class="avatar" src="<?php echo $actor->getAvatar(); ?>" />
+        <a href="<?php echo $actor->getIri() ?>">
+            <?php echo $actor->getName() ?>
+        </a>
+    </span>
+    <span class="verb">
+        <?php echo $verb->getLabel() ?> the following
+        <a href="<?php echo $object->getIri() ?>"><?php echo $object->getTypeLabel() ?></a>
+    </span>
+    <span title="<?php echo $activity->getPublished() ?>" class="published"><?php echo $activity->getPublishedLabel() ?></span>:
+    <span class="object">
+<?php if ($object instanceof DSSN_Activity_Object_Note || $object instanceof DSSN_Activity_Object_Site) : ?>
+        <span class="content"><?php echo $object->getContent() ?></span>
+<?php else : ?>
+    <?php /*
+        <a href="<?php echo $item['objectUri'] ?>"><?php echo $item['objectUri'] ?></a>
+        <?php if(isset($item['objectThumbnail'])) :?>
+        <a href="<?php echo $item['objectUri'] ?>">
+            <img class="thumbnail" src="<?php echo $item['objectThumbnail'] ?>" />
+        </a>
+        <?php endif; ?>
+        <?php if(isset($item['objectContent'])) :?>
+        <span class="content"><?php echo $item['objectContent'] ?></span>
+        <?php endif; ?>
+*/ ?>
+<?php endif ?>
+    </span>
+</div>
+    <?php
     }
 
     /*
