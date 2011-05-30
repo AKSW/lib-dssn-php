@@ -20,7 +20,13 @@ $activity->setVerb(new DSSN_Activity_Verb_Share);
 $activity->setObject($object);
 $activity->setActor($actor);
 
-/* export the activity as a single Atom feed entry XML document */
-$dom = new DOMDocument('1.0', 'UTF-8');
-$dom->appendChild($dom->importNode($activity->toAtomEntry(), true));
-echo $dom->saveXML();
+/* create an activity of one activity entry */
+$feed = new DSSN_Activity_Feed();
+$feed->setTitle('Example Feed');
+$feed->setLinkSelf('http://example.org/my/feed.atom');
+$feed->setLinkHtml('http://example.org/my/feed.html');
+$feed->addActivity($activity);
+
+/* return the feed to the browser */
+$feed->send();
+

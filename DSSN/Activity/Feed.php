@@ -27,6 +27,16 @@ class DSSN_Activity_Feed
      */
     private $activities = array();
 
+
+    /*
+     *
+     */
+    public function send()
+    {
+        header('Content-type: application/atom+xml');
+        echo $this->toXml();
+    }
+
     /*
      * returns an activity feed XML string
      */
