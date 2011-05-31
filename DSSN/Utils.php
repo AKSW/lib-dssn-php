@@ -84,6 +84,7 @@ class DSSN_Utils
             define('DSSN_RDF_type'  , DSSN_RDF_NS . 'type');
             define('DSSN_RDFS_label'  , DSSN_RDFS_NS . 'label');
             define('DSSN_FOAF_name' , DSSN_FOAF_NS . 'name');
+            define('DSSN_FOAF_Person' , DSSN_FOAF_NS . 'Person');
         }
     }
 
