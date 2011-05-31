@@ -17,7 +17,7 @@ class DSSN_Activity_Factory
         if ($ontowiki instanceof OntoWiki) {
             $this->ontowiki = $ontowiki;
         } else {
-            throw new Exception('developer error: Factory constructor needs an ontowiki object');
+            throw new DSSN_Exception('developer error: Factory constructor needs an ontowiki object');
         }
         //$store     = $this->ontowiki->erfurt->getStore();
         //$model     = $this->ontowiki->selectedModel;
@@ -30,7 +30,7 @@ class DSSN_Activity_Factory
     public function getFromStore($iri = null, $model = null)
     {
         if ($iri == null) {
-            throw new Exception('getFromStore needs an IRI string');
+            throw new DSSN_Exception('getFromStore needs an IRI string');
         }
 
         if ($model == null) {
@@ -38,7 +38,7 @@ class DSSN_Activity_Factory
             $model     = $this->ontowiki->selectedModel;
         }
         if (!$model instanceof Erfurt_Rdf_Model){
-            throw new Exception('getFromStore needs a model');
+            throw new DSSN_Exception('getFromStore needs a model');
         }
 
         // query for the activity (Q: restrict ?p here? actor can be big!)
@@ -77,14 +77,14 @@ EndOfTemplate;
     public function newFromModel($iri = null, DSSN_Model $model)
     {
         if ($iri == null) {
-            throw new Exception('getFromModel needs an IRI string');
+            throw new DSSN_Exception('getFromModel needs an IRI string');
         }
         $return = new DSSN_Activity($iri);
         $return->importLiterals($model);
 
         // check for actor, use factory and set actor to activity
         if ($model->countSP( $iri, DSSN_AAIR_activityActor) != 1) {
-            throw new Exception('need exactly ONE aair:activityActor statement');
+            throw new DSSN_Exception('need exactly ONE aair:activityActor statement');
         } else {
             $actorIri   = $model->getValue($iri, DSSN_AAIR_activityActor);
             if ($model->hasSP($actorIri, DSSN_RDF_type)) {
@@ -95,13 +95,13 @@ EndOfTemplate;
                 $actor->fetchDirectImports($model);
                 $return->setActor($actor);
             } else {
-                throw new Exception('need at least one rdf:type statement');
+                throw new DSSN_Exception('need at least one rdf:type statement');
             }
         }
 
         // check for object, use factory and set object to activity
         if ($model->countSP( $iri, DSSN_AAIR_activityObject) != 1) {
-            throw new Exception('need exactly ONE aair:activityObject statement');
+            throw new DSSN_Exception('need exactly ONE aair:activityObject statement');
         } else {
             $objectIri   = $model->getValue($iri, DSSN_AAIR_activityObject);
             if ($model->hasSP($objectIri, DSSN_RDF_type)) {
@@ -112,13 +112,13 @@ EndOfTemplate;
                 $object->fetchDirectImports($model);
                 $return->setObject($object);
             } else {
-                throw new Exception('need at least one rdf:type statement for '.$objectIri);
+                throw new DSSN_Exception('need at least one rdf:type statement for '.$objectIri);
             }
         }
 
         // check for verb, use factory and set verb to activity
         if ($model->countSP( $iri, DSSN_AAIR_activityVerb) != 1) {
-            throw new Exception('need exactly ONE aair:activityVerb statement');
+            throw new DSSN_Exception('need exactly ONE aair:activityVerb statement');
         } else {
             $verbIri   = $model->getValue($iri, DSSN_AAIR_activityVerb);
             $verb = DSSN_Resource::initFromType($verbIri);
@@ -137,7 +137,7 @@ EndOfTemplate;
     {
         $type = $request->getParam('activity-type');
         if ($type == '') {
-            throw new Exception('request error: no activity type parameter');
+            throw new DSSN_Exception('request error: no activity type parameter');
         } else {
             switch ($type) {
                 case 'status':
@@ -156,7 +156,7 @@ EndOfTemplate;
                     );
                     break;
                 default:
-                    throw new Exception('request error: unknown activity type '.$type.' given.');
+                    throw new DSSN_Exception('request error: unknown activity type '.$type.' given.');
                     break;
             }
         }
@@ -168,11 +168,11 @@ EndOfTemplate;
      */
     public function newSharedLink($targetUrl = null, $targetName = null, $actorIri = null, $actorName = null)
     {
-        //throw new Exception("debug: $targetUrl, $targetName, $actorIri, $actorName");
+        //throw new DSSN_Exception("debug: $targetUrl, $targetName, $actorIri, $actorName");
         if ($targetUrl == null) {
-            throw new Exception('request error: no target url given');
+            throw new DSSN_Exception('request error: no target url given');
         } elseif ($targetName == null) {
-            throw new Exception('request error: no target name given');
+            throw new DSSN_Exception('request error: no target name given');
         } else {
             $activity = new DSSN_Activity;
             $activity->setVerb(new DSSN_Activity_Verb_Share);
@@ -203,7 +203,7 @@ EndOfTemplate;
     public function newStatus($content = null, $actorIri = null, $actorName = null)
     {
         if ($content == null) {
-            throw new Exception('request error: no content given');
+            throw new DSSN_Exception('request error: no content given');
         } else {
             $activity = new DSSN_Activity;
             $activity->setVerb(new DSSN_Activity_Verb_Post);

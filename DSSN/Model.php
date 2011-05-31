@@ -19,7 +19,7 @@ class DSSN_Model
      */
     public function hasS($s = null) {
         if ($s == null) {
-            throw new Exception('need an IRI string as first parameter');
+            throw new DSSN_Exception('need an IRI string as first parameter');
         }
         if (isset($this->statements[$s])) {
             return true;
@@ -37,7 +37,7 @@ class DSSN_Model
             return false;
         } else {
             if ($p == null) {
-                throw new Exception('need an IRI string as second parameter');
+                throw new DSSN_Exception('need an IRI string as second parameter');
             }
             if (isset($this->statements[$s][$p])) {
                 return true;
@@ -52,7 +52,7 @@ class DSSN_Model
      */
     public function hasSPvalue($s = null, $p = null, $value = null){
         if ($value == null) {
-            throw new Exception('need a value string as third parameter');
+            throw new DSSN_Exception('need a value string as third parameter');
         } else {
             $values = $this->getValues($s, $p);
             foreach ($values as $key => $object) {

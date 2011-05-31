@@ -57,7 +57,7 @@ abstract class DSSN_Resource
         }
 
         if ($typeIris == null) {
-            throw new Exception('need at least one IRI string as first parameter');
+            throw new DSSN_Exception('need at least one IRI string as first parameter');
         } else {
             foreach ($typeIris as $index => $iri) {
                 switch ($iri) {
@@ -80,7 +80,7 @@ abstract class DSSN_Resource
             }
 
             // throw an error if there is no suitable type
-            throw new Exception("Unknown rdf:type $iri for factory");
+            throw new DSSN_Exception("Unknown rdf:type $iri for factory");
         }
     }
 
@@ -97,7 +97,7 @@ abstract class DSSN_Resource
             case 'DSSN_Activity_Actor_User':      return DSSN_AAIR_NS . 'User';
             case 'DSSN_Activity':                 return DSSN_AAIR_NS . 'Activity';
             default:
-                throw new Exception('Unknown class type IRI of object class '
+                throw new DSSN_Exception('Unknown class type IRI of object class '
                     . get_class($this) . '. Please add it to DSSN_Resource::getType.');
                 exit;
         }

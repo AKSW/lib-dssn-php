@@ -130,7 +130,7 @@ class DSSN_Activity extends DSSN_Resource
     public function importLiterals(DSSN_Model $model) {
         $iri = $this->getIri();
         if ($model->countSP($iri, DSSN_ATOM_published) != 1) {
-            throw new Exception('need exactly ONE atom:published statement');
+            throw new DSSN_Exception('need exactly ONE atom:published statement');
         } else {
             $published = $model->getValue($iri, DSSN_ATOM_published);
             $this->setPublished($published);
@@ -218,7 +218,7 @@ EndOfTemplate;
         if ($actor instanceof DSSN_Activity_Actor) {
             $this->_actor = $actor;
         } else {
-            throw Exception('setActor needs an DSSN_Activity_Actor'.
+            throw DSSN_Exception('setActor needs an DSSN_Activity_Actor'.
                 'or an IRI string as parameter');
         }
     }
