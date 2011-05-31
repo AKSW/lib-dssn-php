@@ -12,7 +12,8 @@ class DSSN_Utils
      * takes an ARC2 index / rdfphp array and adds a triple based on the result
      * of an extended SPARQL query
      */
-    static public function indexAddTripleFromExtendedFormat(array $index, array $s, array $p, array $o) {
+    static public function indexAddTripleFromExtendedFormat
+            (array $index, array $s, array $p, array $o) {
         $model = new DSSN_Model($index);
 
 
@@ -60,31 +61,32 @@ class DSSN_Utils
             /*
              * DSSN namespace constants
              */
-            define('DSSN_AAIR_NS' , 'http://xmlns.notu.be/aair#');
-            define('DSSN_RDF_NS'  , 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-            define('DSSN_RDFS_NS' , 'http://www.w3.org/2000/01/rdf-schema#');
-            define('DSSN_FOAF_NS' , 'http://xmlns.com/foaf/0.1/');
-            define('DSSN_ATOM_NS' , 'http://www.w3.org/2005/Atom/');
-            define('DSSN_XSD_NS'  , 'http://www.w3.org/2001/XMLSchema#');
+            define('DSSN_AAIR_NS', 'http://xmlns.notu.be/aair#');
+            define('DSSN_RDF_NS', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+            define('DSSN_RDFS_NS', 'http://www.w3.org/2000/01/rdf-schema#');
+            define('DSSN_FOAF_NS', 'http://xmlns.com/foaf/0.1/');
+            define('DSSN_ATOM_NS', 'http://www.w3.org/2005/Atom');
+            define('DSSN_XSD_NS', 'http://www.w3.org/2001/XMLSchema#');
+            define('DSSN_ACTIVITIES_NS', 'http://activitystrea.ms/spec/1.0/');
 
             /*
              * DSSN resource constants
              */
-            define('DSSN_ATOM_published' , DSSN_ATOM_NS . 'published');
+            define('DSSN_ATOM_published', DSSN_ATOM_NS . '/published');
 
-            define('DSSN_AAIR_Activity'       , DSSN_AAIR_NS . 'Activity');
-            define('DSSN_AAIR_activityActor'  , DSSN_AAIR_NS . 'activityActor');
-            define('DSSN_AAIR_activityVerb'   , DSSN_AAIR_NS . 'activityVerb');
-            define('DSSN_AAIR_activityObject' , DSSN_AAIR_NS . 'activityObject');
-            define('DSSN_AAIR_avatar'         , DSSN_AAIR_NS . 'avatar');
-            define('DSSN_AAIR_content'        , DSSN_AAIR_NS . 'content');
-            define('DSSN_AAIR_name'           , DSSN_AAIR_NS . 'name');
-            define('DSSN_AAIR_thumbnail'      , DSSN_AAIR_NS . 'thumbnail');
+            define('DSSN_AAIR_Activity', DSSN_AAIR_NS . 'Activity');
+            define('DSSN_AAIR_activityActor', DSSN_AAIR_NS . 'activityActor');
+            define('DSSN_AAIR_activityVerb', DSSN_AAIR_NS . 'activityVerb');
+            define('DSSN_AAIR_activityObject', DSSN_AAIR_NS . 'activityObject');
+            define('DSSN_AAIR_avatar', DSSN_AAIR_NS . 'avatar');
+            define('DSSN_AAIR_content', DSSN_AAIR_NS . 'content');
+            define('DSSN_AAIR_name', DSSN_AAIR_NS . 'name');
+            define('DSSN_AAIR_thumbnail', DSSN_AAIR_NS . 'thumbnail');
 
-            define('DSSN_RDF_type'  , DSSN_RDF_NS . 'type');
-            define('DSSN_RDFS_label'  , DSSN_RDFS_NS . 'label');
-            define('DSSN_FOAF_name' , DSSN_FOAF_NS . 'name');
-            define('DSSN_FOAF_Person' , DSSN_FOAF_NS . 'Person');
+            define('DSSN_RDF_type', DSSN_RDF_NS . 'type');
+            define('DSSN_RDFS_label', DSSN_RDFS_NS . 'label');
+            define('DSSN_FOAF_name', DSSN_FOAF_NS . 'name');
+            define('DSSN_FOAF_Person', DSSN_FOAF_NS . 'Person');
         }
     }
 
@@ -100,7 +102,7 @@ class DSSN_Utils
             'rdf'  => DSSN_RDF_NS,
             'rdfs' => DSSN_RDFS_NS,
             'foaf' => DSSN_FOAF_NS,
-            'atom' => DSSN_ATOM_NS,
+            'atom' => DSSN_ATOM_NS . '/',
             'xsd'  => DSSN_XSD_NS,
         );
         return $namespaces;
@@ -153,7 +155,8 @@ class DSSN_Utils
      */
     public static function includeClass($class)
     {
-        require(dirname(__FILE__) . '/../' . strtr($class, '_\\', '//') . '.php');
+        $dirPrefix = dirname(__FILE__) . '/../';
+        require($dirPrefix . strtr($class, '_\\', '//') . '.php');
     }
 
 

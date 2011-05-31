@@ -250,4 +250,59 @@ EndOfTemplate;
 
         return $activity;
     }
+
+    /*
+     * new activity based on an atom:feed/atom:entry DOMElement
+     *
+     * TODO: this needs to be tweaked to conform to the standard (e.g
+     * abbrevated syntax)
+     */
+    public static function newFromDomElement(DOMElement $element)
+    {
+        // create xpath environment
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom->appendChild($dom->importNode($element, true));
+        $xpath = new DOMXPath($dom);
+        $xpath->registerNamespace('atom', DSSN_ATOM_NS);
+        $xpath->registerNamespace('activity', DSSN_ACTIVITIES_NS);
+
+        // this is our new activity
+        $activity = new DSSN_Activity();
+
+        // fetch id
+        $nodes = $xpath->query('/atom:entry/atom:id/text()');
+        foreach ($nodes as $node) {
+            $activity->setIri(strip_tags($node->wholeText));
+        }
+
+        // fetch title
+        $nodes = $xpath->query('/atom:entry/atom:title/text()');
+        foreach ($nodes as $node) {
+            $activity->setTitle(strip_tags($node->wholeText));
+        }
+
+        // fetch verb
+        $nodes = $xpath->query('/atom:entry/activity:verb/text()');
+        foreach ($nodes as $node) {
+            $verb = DSSN_Activity_Verb_Factory::newFromText(strip_tags($node->wholeText));
+            $activity->setVerb($verb);
+        }
+
+        // fetch actor
+        $nodes = $xpath->query('/atom:entry/atom:author');
+        foreach ($nodes as $node) {
+            $actor = DSSN_Activity_Actor_Factory::newFromDOMNode($node);
+            $activity->setActor($actor);
+        }
+
+        // fetch object
+        $nodes = $xpath->query('/atom:entry/activity:object');
+        foreach ($nodes as $node) {
+            $object = DSSN_Activity_Object_Factory::newFromDOMNode($node);
+            $activity->setObject($object);
+        }
+
+        return $activity;
+    }
+
 }

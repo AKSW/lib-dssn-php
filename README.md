@@ -17,8 +17,9 @@ RDF, you can use it without any dependency.
 Currently it supports the following tasks:
 
 * create activities in memory
-* export activities to RDF knowledge bases (currently using [ARC2](https://github.com/semsol/arc2) turtle templates)
 * export activities to Atom entries / feeds (via [DOMDocument](http://php.net/manual/en/class.domdocument.php)
+* consume activities from Atom feeds
+* export activities to RDF knowledge bases (currently using [ARC2](https://github.com/semsol/arc2) turtle templates)
 * load activities from a triple store via SPARQL (currently using [Erfurt](http://github.com/AKSW/Erfurt))
 
 At the moment, the following activities (verbs) are supported. Please
@@ -39,7 +40,9 @@ for further information.
 
 On the close roadmap are the following tasks:
 
-* consume activities from Atom feed entries
+* more object types (e.g. article and photo)
+* more verbs (e.g. save and remove)
+* robustness against unknown verbs / object types
 
 ## Code Example
 

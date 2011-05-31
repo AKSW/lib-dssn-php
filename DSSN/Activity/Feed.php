@@ -100,7 +100,6 @@ class DSSN_Activity_Feed
         return $this->activities;
     }
 
-
     /**
      * Get title.
      *
@@ -160,4 +159,5 @@ class DSSN_Activity_Feed
     {
         $this->linkHtml = $linkHtml;
     }
+
 }

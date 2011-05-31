@@ -11,12 +11,12 @@ class DSSN_Activity extends DSSN_Resource
     private $_verb      = null;
     private $_object    = null;
     private $_published = null;
-
+    private $_title     = null;
 
     /*
      * generates a non-markuped single string title e.g. for feed usage
      */
-    public function getTitle()
+    public function generateTitle()
     {
         $title  = "";
         $title .= $this->_actor->getName() . ' ';
@@ -29,6 +29,7 @@ class DSSN_Activity extends DSSN_Resource
         } else {
             $title .= $this->_object->getIri();
         }
+
         return $title;
     }
 
@@ -263,4 +264,27 @@ EndOfTemplate;
         $this->_object = $object;
     }
 
+
+    /**
+     * Get _title.
+     *
+     * @return _title.
+     */
+    function getTitle()
+    {
+        if ($this->_title == null ) {
+            $this->setTitle($this->generateTitle());
+        }
+        return $this->_title;
+    }
+
+    /**
+     * Set _title.
+     *
+     * @param _title the value to set.
+     */
+    function setTitle($_title)
+    {
+        $this->_title = $_title;
+    }
 }
