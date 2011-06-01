@@ -18,6 +18,11 @@ class DSSN_Activity_Feed
     private $linkSelf = null;
 
     /*
+     * feed->link rel=hub
+     */
+    private $linkHub = null;
+
+    /*
      * feed->link rel=html
      */
     private $linkHtml = null;
@@ -29,7 +34,7 @@ class DSSN_Activity_Feed
 
 
     /*
-     *
+     * send the feed to the air ...
      */
     public function send()
     {
@@ -73,6 +78,14 @@ class DSSN_Activity_Feed
         $linkHtml->setAttribute('type', 'text/html');
         $linkHtml->setAttribute('href', $this->getLinkHtml());
         $feed->appendChild($linkHtml);
+
+        // feed->link@hub
+        if (isset($this->linkHub)) {
+            $linkHub = $dom->createElement('link');
+            $linkHub->setAttribute('rel', 'hub');
+            $linkHub->setAttribute('href', $this->getLinkHub());
+            $feed->appendChild($linkHub);
+        }
 
         // feed->entries
         foreach ($this->getActivities() as $key => $activity) {
@@ -160,4 +173,23 @@ class DSSN_Activity_Feed
         $this->linkHtml = $linkHtml;
     }
 
+    /**
+     * Get linkHub.
+     *
+     * @return linkHub.
+     */
+    function getLinkHub()
+    {
+        return $this->linkHub;
+    }
+
+    /**
+     * Set linkHub.
+     *
+     * @param linkHub the value to set.
+     */
+    function setLinkHub($linkHub)
+    {
+        $this->linkHub = $linkHub;
+    }
 }
