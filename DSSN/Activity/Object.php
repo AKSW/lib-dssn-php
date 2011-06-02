@@ -46,7 +46,7 @@ class DSSN_Activity_Object extends DSSN_Resource
          * object, if the object has a name. An Object construct MAY have
          * a name, but MUST NOT have more than one.
          */
-        $name = $dom->createElement('name', $this->getName());
+        $name = $dom->createElement('title', $this->getName());
         $object->appendChild($name);
 
         /* object->object-type
