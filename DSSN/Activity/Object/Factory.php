@@ -51,14 +51,19 @@ class DSSN_Activity_Object_Factory
 
         // fetch object-type and create object of that
         $nodes = $xpath->query('/activity:object/activity:object-type/text()');
-        foreach ($nodes as $node) {
+        $object = null;
+        foreach($nodes as $node) {
             $object = DSSN_Activity_Object_Factory::newFromObjectTypeString(strip_tags($node->wholeText));
         }
 
         // fetch name
-        $nodes = $xpath->query('/atom:author/atom:name/text()');
+        $nodes = $xpath->query('/activity:object/atom:title/text()');
         foreach ($nodes as $node) {
             $object->setName(strip_tags($node->wholeText));
+            
+            if ($object instanceof DSSN_Activity_Object_Note) {
+                $object->setContent(strip_tags($node->wholeText));
+            }
         }
 
         // fetch iri
@@ -66,7 +71,7 @@ class DSSN_Activity_Object_Factory
         foreach ($nodes as $node) {
             $object->setIri(strip_tags($node->wholeText));
         }
-
+        
         return $object;
     }
 
