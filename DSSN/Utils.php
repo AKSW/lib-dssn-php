@@ -88,6 +88,8 @@ class DSSN_Utils
             define('DSSN_FOAF_name', DSSN_FOAF_NS . 'name');
             define('DSSN_FOAF_knows', DSSN_FOAF_NS . 'knows');
             define('DSSN_FOAF_Person', DSSN_FOAF_NS . 'Person');
+            define('DSSN_FOAF_nick' , DSSN_FOAF_NS . 'nick');
+            define('DSSN_FOAF_depiction' , DSSN_FOAF_NS . 'depiction');
         }
     }
 
