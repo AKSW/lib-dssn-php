@@ -83,13 +83,19 @@ class DSSN_Utils
             define('DSSN_AAIR_name', DSSN_AAIR_NS . 'name');
             define('DSSN_AAIR_thumbnail', DSSN_AAIR_NS . 'thumbnail');
 
-            define('DSSN_RDF_type', DSSN_RDF_NS . 'type');
-            define('DSSN_RDFS_label', DSSN_RDFS_NS . 'label');
-            define('DSSN_FOAF_name', DSSN_FOAF_NS . 'name');
-            define('DSSN_FOAF_knows', DSSN_FOAF_NS . 'knows');
-            define('DSSN_FOAF_Person', DSSN_FOAF_NS . 'Person');
-            define('DSSN_FOAF_nick' , DSSN_FOAF_NS . 'nick');
-            define('DSSN_FOAF_depiction' , DSSN_FOAF_NS . 'depiction');
+            define('DSSN_RDF_type',     DSSN_RDF_NS . 'type');
+            define('DSSN_RDFS_label',   DSSN_RDFS_NS . 'label');
+            define('DSSN_FOAF_knows',   DSSN_FOAF_NS . 'knows');
+            define('DSSN_FOAF_Person',  DSSN_FOAF_NS . 'Person');
+            define('DSSN_FOAF_name',    DSSN_FOAF_NS . 'name');
+            define('DSSN_FOAF_firstname',DSSN_FOAF_NS . 'firstname');
+            define('DSSN_FOAF_nick' ,   DSSN_FOAF_NS . 'nick');
+            define('DSSN_FOAF_surname' ,DSSN_FOAF_NS . 'surname');
+            define('DSSN_FOAF_familyName', DSSN_FOAF_NS . 'familyName');
+            define('DSSN_FOAF_family_name', DSSN_FOAF_NS . 'family_name');
+            define('DSSN_FOAF_depiction',DSSN_FOAF_NS . 'depiction');
+            define('DSSN_FOAF_img',     DSSN_FOAF_NS . 'img');
+            define('DSSN_FOAF_status',     DSSN_FOAF_NS . 'status');
         }
     }
 
