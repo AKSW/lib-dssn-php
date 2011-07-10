@@ -28,7 +28,7 @@ class DSSN_Foaf_Person
             if(is_array($res) && !empty ($res)){
                 $me = $res[0]['me'];
             } else {
-                $res = $this->ow->sparqlAsk('PREFIX foaf:<'.DSSN_FOAF_NS.'> ASK FROM <'.$model.'> WHERE {<'.$this->ow->selectedModel->getModelIri().'> a foaf:Person}');
+                $res = $this->store->sparqlAsk('PREFIX foaf:<'.DSSN_FOAF_NS.'> ASK FROM <'.$model.'> WHERE {<'.$this->ow->selectedModel->getModelIri().'> a foaf:Person}');
                 if($res){
                     $me = $model;
                 } else {
