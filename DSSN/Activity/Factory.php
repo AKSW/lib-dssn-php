@@ -7,24 +7,101 @@
  */
 class DSSN_Activity_Factory
 {
-    /*
+    /**
      * the ontowiki app object
      */
-    private $ontowiki;
+    private $_ontowiki;
 
-    public function __construct($ontowiki)
+    /**
+     * the erfurt app object
+     */
+    private $_erfurt;
+
+    /**
+     * the erfurt store object
+     */
+    private $_store;
+
+    /**
+     * the URI of the model to select
+     */
+    private $_modelUri;
+
+    /**
+     * Constructor for an Activity Factory.
+     * @param $store OntoWiki|Erfurt_App An OntoWiki or Erfurt_App object from where the activities
+     *        are taken.
+     * @param $modelUri string with a URI for the model to select.
+     *        Optional if $store is an OntoWiki, mandatory Erfurt_App.
+     */
+    public function __construct($store, $modelUri = null)
     {
-        if ($ontowiki instanceof OntoWiki) {
-            $this->ontowiki = $ontowiki;
+        $this->_modelUri = $modelUri;
+
+        if ($store instanceof OntoWiki) {
+            $this->_ontowiki = $store;
+        } else if ($store instanceof Erfurt_App) {
+            if ($this->_modelUri !== null) {
+                $this->_erfurt = $store;
+            } else {
+                throw new DSSN_Exception(
+                    'developer error: Factory constructor needs a model URI if Erfurt_App object ' .
+                    'is provided'
+                );
+            }
+        } else if ($store instanceof Erfurt_Store) {
+            if ($this->_modelUri !== null) {
+                $this->_store = $store;
+            } else {
+                throw new DSSN_Exception(
+                    'developer error: Factory constructor needs a model URI if Erfurt_Store ' .
+                    'object is provided'
+                );
+            }
         } else {
-            throw new DSSN_Exception('developer error: Factory constructor needs an ontowiki object');
+            throw new DSSN_Exception(
+                'developer error: Factory constructor needs an Erfurt_App, Erfurt_Store or ' .
+                'OntoWiki object'
+            );
         }
-        //$store     = $this->ontowiki->erfurt->getStore();
-        //$model     = $this->ontowiki->selectedModel;
-        //$translate = $this->ontowiki->translate;
+        //$store     = $this->_ontowiki->erfurt->getStore();
+        //$model     = $this->_ontowiki->selectedModel;
+        //$translate = $this->_ontowiki->translate;
     }
 
-    /*
+    /**
+     * get a store object
+     * @return Erfurt_Store
+     */
+    private function _getStore()
+    {
+        if (isset($this->_store) && $this->_store !== null) {
+            return $this->_store;
+        } else if (isset($this->_erfurt) && $this->_erfurt !== null) {
+            return $this->_erfurt->getStore();
+        } else if (isset($this->_ontowiki) && $this->_ontowiki !== null) {
+            return $this->_ontowiki->erfurt->getStore();
+        } else {
+            throw new DSSN_Exception('Can\'t get store, there is neither an OntoWiki nor Erfurt');
+        }
+    }
+
+    /**
+     * get the currently sellected model or the default model
+     */
+    private function _getModel()
+    {
+        if ($this->_modelUri !== null) {
+            $store = $this->_getStore();
+            return $store->getModel($this->_modelUri);
+        } else if (isset($this->_ontowiki) && $this->_ontowiki !== null) {
+            return $this->_ontowiki->selectedModel;
+        } else {
+            throw new DSSN_Exception('Can\'t get model');
+        }
+    }
+
+    /**
      * fetch a resource from the store
      */
     public function getFromStore($iri = null, $model = null)
@@ -34,8 +111,7 @@ class DSSN_Activity_Factory
         }
 
         if ($model == null) {
-            $store     = $this->ontowiki->erfurt->getStore();
-            $model     = $this->ontowiki->selectedModel;
+            $model     = $this->_getModel();
         }
         if (!$model instanceof Erfurt_Rdf_Model){
             throw new DSSN_Exception('getFromStore needs a model');
@@ -71,7 +147,7 @@ EndOfTemplate;
         return $this->newFromModel($iri, $index);
     }
 
-    /*
+    /**
      * gets an ARC2 index / phprdf array and creates an activity from that
      */
     public function newFromModel($iri = null, DSSN_Model $model)
@@ -130,11 +206,17 @@ EndOfTemplate;
         return $return;
     }
 
-    /*
+    /**
      * input is form request from the ShareitModule
+     * this method is only available if the factory is initialized with and ontowiki
+     * @throws DSSN_Exception
      */
     public function newFromShareItModule($request)
     {
+        if (!isset($this->_ontowiki) || $this->_ontowiki === null) {
+            throw new DSSN_Exception('No ontowiki was found');
+        }
+
         $type = $request->getParam('activity-type');
         if ($type == '') {
             throw new DSSN_Exception('request error: no activity type parameter');
@@ -143,16 +225,16 @@ EndOfTemplate;
                 case 'status':
                     $activity = $this->newStatus(
                         (string) $request->getParam('share-status'),
-                        (string) $this->ontowiki->user->getUri(),
-                        (string) $this->ontowiki->user->getUsername()
+                        (string) $this->_ontowiki->user->getUri(),
+                        (string) $this->_ontowiki->user->getUsername()
                     );
                     break;
                 case 'link':
                     $activity = $this->newSharedLink(
                         (string) $request->getParam('share-link-url'),
                         (string) $request->getParam('share-link-name'),
-                        (string) $this->ontowiki->user->getUri(),
-                        (string) $this->ontowiki->user->getUsername()
+                        (string) $this->_ontowiki->user->getUri(),
+                        (string) $this->_ontowiki->user->getUsername()
                     );
                     break;
                 default:
@@ -163,11 +245,16 @@ EndOfTemplate;
         return $activity;
     }
 
-    /*
+    /**
      * creates a new shared link activity
+     * @throws DSSN_Exception
      */
     public function newSharedLink($targetUrl = null, $targetName = null, $actorIri = null, $actorName = null)
     {
+        if (!isset($this->_ontowiki) || $this->_ontowiki === null) {
+            throw new DSSN_Exception('No ontowiki was found');
+        }
+
         //throw new DSSN_Exception("debug: $targetUrl, $targetName, $actorIri, $actorName");
         if ($targetUrl == null) {
             throw new DSSN_Exception('request error: no target url given');
@@ -185,10 +272,10 @@ EndOfTemplate;
 
             $actor = new DSSN_Activity_Actor_User;
             if ($actorIri == null) {
-                $actorIri = (string) $this->ontowiki->user->getUri();
+                $actorIri = (string) $this->_ontowiki->user->getUri();
             }
             if ($actorName == null) {
-                $actorName = (string) $this->ontowiki->user->getGetUsername();
+                $actorName = (string) $this->_ontowiki->user->getGetUsername();
             }
             $actor->setIri($actorIri);
             $actor->setName($actorName);
@@ -197,11 +284,16 @@ EndOfTemplate;
         }
     }
 
-    /*
+    /**
      * creates a new status note from the current ontowiki user
+     * @throws DSSN_Exception
      */
     public function newStatus($content = null, $actorIri = null, $actorName = null)
     {
+        if (!isset($this->_ontowiki) || $this->_ontowiki === null) {
+            throw new DSSN_Exception('No ontowiki was found');
+        }
+
         if ($content == null) {
             throw new DSSN_Exception('request error: no content given');
         } else {
@@ -214,10 +306,10 @@ EndOfTemplate;
 
             $actor = new DSSN_Activity_Actor_User;
             if ($actorIri == null) {
-                $actorIri = (string) $this->ontowiki->user->getUri();
+                $actorIri = (string) $this->_ontowiki->user->getUri();
             }
             if ($actorName == null) {
-                $actorName = (string) $this->ontowiki->user->getUsername();
+                $actorName = (string) $this->_ontowiki->user->getUsername();
             }
             $actor->setIri($actorIri);
             $actor->setName($actorName);
@@ -226,7 +318,7 @@ EndOfTemplate;
         }
     }
 
-    /*
+    /**
      * creates a static example
      */
     static public function newExample()
@@ -251,7 +343,7 @@ EndOfTemplate;
         return $activity;
     }
 
-    /*
+    /**
      * new activity based on an atom:feed/atom:entry DOMElement
      *
      * TODO: this needs to be tweaked to conform to the standard (e.g
