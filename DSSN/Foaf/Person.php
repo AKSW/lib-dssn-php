@@ -1,90 +1,163 @@
 <?php
 /**
- * An activity user
+ * This file is part of the {@link https://github.com/AKSW/lib-dssn-php/ lib-dssn-php} project.
+ *
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * This Class represents a foaf:Person
  *
  * @author  Jonas Brekle <jonas.brekle@gmail.com>
- * @license http://sam.zoy.org/wtfpl/  Do What The Fuck You Want To Public License (WTFPL)
+ * @author  Natanael Arndt <arndtn@gmail.com>
  */
 class DSSN_Foaf_Person
 {
     public $uri;
-    
-    protected $ow;
-    protected $store;
-    
+
+    protected $ow = null;
+    protected $store = null;
+
     protected $props = array();
 
     const URI = 1;
     const BASIC = 2;
     const FULL = 3;
     const TRANSITIVE = 3;
-    
-    public function __construct($u, $isModel = false, $mode = self::URI, $transitivity = false, $depth = 1) {
-        $this->ow = OntoWiki::getInstance();
-        $this->store = $this->ow->erfurt->getStore();
-        if($isModel){
+
+    public function __construct($u, $isModel = false, $mode = self::URI, $transitivity = false, $depth = 1)
+    {
+        if ($isModel) {
+            $this->ow = OntoWiki::getInstance();
+            $this->store = $this->ow->erfurt->getStore();
+
             $model = $u;
-            $res = $this->store->sparqlQuery('PREFIX foaf:<'.DSSN_FOAF_NS.'> SELECT ?me FROM <'.$model.'> WHERE {<'.$model.'> a foaf:PersonalProfileDocument . <'.$this->ow->selectedModel->getModelIri().'> foaf:primaryTopic ?me}');
-            if(is_array($res) && !empty ($res)){
+
+            $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+            $query.= 'SELECT ?me' . PHP_EOL;
+            $query.= 'FROM <'.$model.'>' . PHP_EOL;
+            $query.= 'WHERE {' . PHP_EOL;
+            $query.= '  <'.$model.'> a foaf:PersonalProfileDocument .' . PHP_EOL;
+            $query.= '  <'.$this->ow->selectedModel->getModelIri().'> foaf:primaryTopic ?me' . PHP_EOL;
+            $query.= '}' . PHP_EOL;
+
+            $res = $this->store->sparqlQuery($query);
+
+            if (is_array($res) && !empty ($res)) {
                 $me = $res[0]['me'];
             } else {
-                $res = $this->store->sparqlAsk('PREFIX foaf:<'.DSSN_FOAF_NS.'> ASK FROM <'.$model.'> WHERE {<'.$this->ow->selectedModel->getModelIri().'> a foaf:Person}');
+
+                $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+                $query.= 'ASK FROM <'.$model.'>' . PHP_EOL;
+                $query.= 'WHERE {' . PHP_EOL;
+                $query.= '  <'.$this->ow->selectedModel->getModelIri().'> a foaf:Person' . PHP_EOL;
+                $query.= '}' . PHP_EOL;
+
+                $res = $this->store->sparqlAsk($query);
+
                 if($res){
                     $me = $model;
                 } else {
-                    throw new OntoWiki_Exception("given uri is not a foaf profile or person");
+                    throw new DSSN_Exception("given uri is not a foaf profile or person");
                 }
             }
+
             $this->uri = $me;
-        } else $this->uri = $u;
-        if($mode == self::BASIC){
-            
+
+        } else {
+            $this->uri = $u;
+        }
+
+        if ($mode == self::BASIC) {
+
         } //... build props
-        if($transitivity != false){
+
+        if ($transitivity != false) {
             $this->props['friends'] = $this->getFriends($transitivity, $depth);
         }
     }
-    
+
     /**
      *
      * @param type $mode 
      */
-    public function getFriends($mode = self::URI, $depth = 1){
+    public function getFriends($mode = self::URI, $depth = 1)
+    {
+        if ($this->ow === null) {
+            $this->ow = OntoWiki::getInstance();
+        }
+
+        if ($this->store === null) {
+            $this->store = $this->ow->erfurt->getStore();
+        }
+
         $friends = array();
-        if($depth == 0) return $friends;
-        if($mode == self::URI){
-            $res = $this->store->sparqlQuery('PREFIX foaf:<'.DSSN_FOAF_NS.'> SELECT * FROM <'.$ow->selectedModel.'> WHERE {<'.$this->uri.'> foaf:knows ?f}');
-            foreach ($res as $ares){
-               $friends[$ares['f']] = array('uri'=>$ares['f']); 
+
+        if ($depth == 0) {
+            return $friends;
+        }
+
+        if ($mode == self::URI) {
+            $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+            $query.= 'SELECT *' . PHP_EOL;
+            $query.= 'FROM <'.$ow->selectedModel.'>' . PHP_EOL;
+            $query.= 'WHERE {' . PHP_EOL;
+            $query.= '  <'.$this->uri.'> foaf:knows ?f' . PHP_EOL;
+            $query.= '}' . PHP_EOL;
+
+            $res = $this->store->sparqlQuery($query);
+
+            foreach ($res as $ares) {
+               $friends[$ares['f']] = array('uri'=>$ares['f']);
             }
-        } else if ($mode == self::BASIC){
-            $res = $this->store->sparqlQuery('PREFIX foaf:<'.DSSN_FOAF_NS.'> 
-                SELECT * FROM <'.$this->ow->selectedModel.'> WHERE {
-                    <'.$this->uri.'> foaf:knows ?f .
-                        ?f foaf:name ?name .
-                        ?f foaf:birthday ?birthday .
-                        ?f foaf:depiction ?depiction
-                    }');
-            foreach ($res as $ares){
+
+        } else if ($mode == self::BASIC) {
+
+            $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+            $query.= 'SELECT * FROM <'.$this->ow->selectedModel.'> WHERE {' . PHP_EOL;
+            $query.= '  <'.$this->uri.'> foaf:knows ?f .' . PHP_EOL;
+            $query.= '  ?f foaf:name ?name ;' . PHP_EOL;
+            $query.= '     foaf:birthday ?birthday ;' . PHP_EOL;
+            $query.= '     foaf:depiction ?depiction' . PHP_EOL;
+            $query.= '}' . PHP_EOL;
+
+            $res = $this->store->sparqlQuery($query);
+
+            foreach ($res as $ares) {
                $friends[$ares['f']] = array(
-                   'uri'=>$ares['f'],
+                   'uri' => $ares['f'],
                    'name' => $ares['name'],
                    'birthday' => $ares['birthday'],
                    'depiction' => $ares['depiction']
                );
             }
-        } else if ($mode == self::FULL){
-            $res = $this->store->sparqlQuery('PREFIX foaf:<'.DSSN_FOAF_NS.'> SELECT * FROM <'.$ow->selectedModel.'> WHERE {
-                <'.$this->uri.'> foaf:knows ?f
-                    ?f ?p ?o}');
-            foreach ($res as $ares){
+        } else if ($mode == self::FULL) {
+
+            $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+            $query.= 'SELECT *' . PHP_EOL;
+            $query.= 'FROM <'.$ow->selectedModel.'>' . PHP_EOL;
+            $query.= 'WHERE {' . PHP_EOL;
+            $query.= '  <'.$this->uri.'> foaf:knows ?f.' . PHP_EOL;
+            $query.= '  ?f ?p ?o.' . PHP_EOL;
+            $query.= '}' . PHP_EOL;
+
+            $res = $this->store->sparqlQuery($query);
+
+            foreach ($res as $ares) {
                //TODO
             }
-        } else if ($mode == self::TRANSITIVE){
+        } else if ($mode == self::TRANSITIVE) {
             //TODO maybe use getTransitiveClosure method...
-            $res = $this->store->sparqlQuery('PREFIX foaf:<'.DSSN_FOAF_NS.'> SELECT * FROM <'.$ow->selectedModel.'> WHERE {
-                <'.$this->uri.'> foaf:knows ?f}');
-            foreach ($res as $ares){
+            $query = 'PREFIX foaf:<'.DSSN_FOAF_NS.'>' . PHP_EOL;
+            $query.= 'SELECT *' . PHP_EOL;
+            $query.= 'FROM <'.$ow->selectedModel.'>' . PHP_EOL;
+            $query.= 'WHERE {' . PHP_EOL;
+            $query.= '  <'.$this->uri.'> foaf:knows ?f' . PHP_EOL;
+            $query.= '}' . PHP_EOL;
+
+            $res = $this->store->sparqlQuery($query);
+
+            foreach ($res as $ares) {
                $friends[] = new DSSN_Foaf_Person($ares['f'], false, $mode, self::TRANSITIVE, $depth -1);
             }
         }
