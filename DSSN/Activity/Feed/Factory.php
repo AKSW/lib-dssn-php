@@ -18,17 +18,26 @@ class DSSN_Activity_Feed_Factory
             throw new DSSN_Exception($message);
         }
 
-        // since DOMDocument::loadXML thows Warnings instead of Exceptions
-        // hack the error handler (see $this->handleXmlError)
-        $handler= array('DSSN_Activity_Feed_Factory', 'HandleXmlError');
-        set_error_handler($handler);
+        $curlHandler = curl_init();
 
-        // try to parse the document and restore standard handler after that
-        $dom = DOMDocument::load($url);
-        restore_error_handler();
+        // set the url
+        curl_setopt($curlHandler, CURLOPT_URL, $url);
+        curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
 
-        // route to newFromDomDocument
-        return DSSN_Activity_Feed_Factory::newFromDomDocument($dom);
+        $result = curl_exec($curlHandler);
+        $httpCode = curl_getinfo($curlHandler, CURLINFO_HTTP_CODE);
+
+        curl_close($curlHandler);
+
+        if ($httpCode-($httpCode%100) != 200) {
+            $message = 'The request to the given feed url: "' . $url;
+            $message.= '" returned the http code: "' . $httpCode . '"';
+            throw new DSSN_Exception($message);
+        }
+
+        // route to newFromXml
+        return DSSN_Activity_Feed_Factory::newFromXml($result);
     }
 
 
@@ -48,7 +57,9 @@ class DSSN_Activity_Feed_Factory
         set_error_handler($handler);
 
         // try to parse the document and restore standard handler after that
-        $dom = DOMDocument::loadXml($xml);
+        $dom = new DOMDocument;
+        $dom->loadXml($xml);
+
         restore_error_handler();
 
         // route to newFromDomDocument
@@ -70,6 +81,18 @@ class DSSN_Activity_Feed_Factory
         $nodes = $xpath->query('/atom:feed/atom:title/text()');
         foreach ($nodes as $titleNode) {
             $feed->setTitle(strip_tags($titleNode->wholeText));
+        }
+
+            // fetch feed/linkSelf
+        $nodes = $xpath->query('/atom:feed/atom:link[@rel="self"]/@href');
+        foreach ($nodes as $hubNode) {
+            $feed->setLinkSelf(strip_tags($hubNode->value));
+        }
+
+        // fetch feed/linkHub
+        $nodes = $xpath->query('/atom:feed/atom:link[@rel="hub"]/@href');
+        foreach ($nodes as $hubNode) {
+            $feed->setLinkHub(strip_tags($hubNode->value));
         }
 
         // fetch feed/updated
