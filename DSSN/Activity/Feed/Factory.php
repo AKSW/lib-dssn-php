@@ -72,6 +72,12 @@ class DSSN_Activity_Feed_Factory
             $feed->setTitle(strip_tags($titleNode->wholeText));
         }
 
+        // fetch feed/updated
+        $nodes = $xpath->query('/atom:feed/atom:updated/text()');
+        foreach ($nodes as $updatedNode) {
+            $feed->setUpdated(strip_tags($updatedNode->wholeText));
+        }
+
         // fetch feed/entries
         $nodes = $xpath->query('/atom:feed/atom:entry');
         foreach ($nodes as $entryNode) {

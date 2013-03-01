@@ -10,6 +10,7 @@ class DSSN_Activity extends DSSN_Resource
     private $_actor     = null;
     private $_verb      = null;
     private $_object    = null;
+    private $_context   = null;
     private $_published = null;
     private $_title     = null;
 
@@ -111,6 +112,12 @@ class DSSN_Activity extends DSSN_Resource
         $object = $this->getObject()->toDomElement();
         $entry->appendChild($dom->importNode($object, true));
 
+        // entry->context
+        $context = $this->getContext()->toDomElement();
+        if (isset($context) ) {
+            $entry->appendChild($dom->importNode($context, true));
+        }
+
         // entry->verb
         $verb = $this->getVerb()->toDomElement();
         $entry->appendChild($dom->importNode($verb, true));
@@ -121,11 +128,13 @@ class DSSN_Activity extends DSSN_Resource
 
     public function getSubResources()
     {
-        return array(
+        $return = array(
             $this->getActor(),
             $this->getVerb(),
-            $this->getObject()
+            $this->getObject(),
+            $this->getContext()
         );
+        return $return;
     }
 
     public function importLiterals(DSSN_Model $model) {
@@ -147,6 +156,7 @@ class DSSN_Activity extends DSSN_Resource
                 aair:activityVerb   ?verbIri ;
                 aair:activityActor  ?actorIri ;
                 aair:activityObject ?objectIri .
+                OPTIONAL ?activityIri aair:activityContext ?contextIri .
 EndOfTemplate;
         return $template;
     }
@@ -158,6 +168,7 @@ EndOfTemplate;
         $vars['verbIri']     = $this->getVerb()->getIri();
         $vars['actorIri']    = $this->getActor()->getIri();
         $vars['objectIri']   = $this->getObject()->getIri();
+        $vars['contextIri']  = $this->getContext()->getIri();
         return $vars;
     }
 
@@ -174,7 +185,7 @@ EndOfTemplate;
         }
         return $this->_published;
     }
-    
+
     /**
      * Get published label as nice diff string.
      *
@@ -264,6 +275,25 @@ EndOfTemplate;
         $this->_object = $object;
     }
 
+    /**
+     * Get context
+     *
+     * @return context.
+     */
+    public function getContext()
+    {
+        return $this->_context;
+    }
+
+    /**
+     * Set context.
+     *
+     * @param context the value to set.
+     */
+    public function setContext(DSSN_Activity_Context $context)
+    {
+        $this->_context = $context;
+    }
 
     /**
      * Get _title.

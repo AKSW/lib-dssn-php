@@ -78,6 +78,7 @@ class DSSN_Utils
             define('DSSN_AAIR_activityActor', DSSN_AAIR_NS . 'activityActor');
             define('DSSN_AAIR_activityVerb', DSSN_AAIR_NS . 'activityVerb');
             define('DSSN_AAIR_activityObject', DSSN_AAIR_NS . 'activityObject');
+            define('DSSN_AAIR_activityContext', DSSN_AAIR_NS . 'activityContext');
             define('DSSN_AAIR_avatar', DSSN_AAIR_NS . 'avatar');
             define('DSSN_AAIR_content', DSSN_AAIR_NS . 'content');
             define('DSSN_AAIR_name', DSSN_AAIR_NS . 'name');
@@ -134,7 +135,7 @@ class DSSN_Utils
     }
 
     /**
-     * register a standard php library autoloader function suitable to autload 
+     * register a standard php library autoloader function suitable to autoload
      * available DSSN classes
      * http://www.php.net/manual/en/function.spl-autoload.php#103548
      *
@@ -155,7 +156,7 @@ class DSSN_Utils
     {
         return spl_autoload_unregister(array(__CLASS__, 'includeClass'));
     }
-    
+
     /*
      * the used DSSN __autoload function
      * http://www.php.net/manual/en/function.spl-autoload.php#103548

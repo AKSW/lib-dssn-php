@@ -30,9 +30,9 @@ class DSSN_Activity_Verb_Factory
                 break;
 
             default:
-                $message = 'newFromFeedElementText: Unknown verb ' . $text;
-                throw new DSSN_Exception($message);
-                break;
+                $verb = new DSSN_Activity_Verb();
+                $verb->setIri($text);
+                return $verb;
         }
     }
 
