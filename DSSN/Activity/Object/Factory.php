@@ -29,10 +29,20 @@ class DSSN_Activity_Object_Factory
                 return new DSSN_Activity_Object_Bookmark();
                 break;
 
-            default:
-                $message = 'newFromFeedElementText: Unknown object ' . $text;
-                throw new DSSN_Exception($message);
+            case 'photo':
+            case 'http://activitystrea.ms/schema/1.0/photo':
+                return new DSSN_Activity_Object_Photo();
                 break;
+
+            case 'inReplyTo':
+            case 'http://activitystrea.ms/schema/1.0/inReplyTo':
+                return new DSSN_Activity_Context();
+                break;
+
+            default:
+                $object = new DSSN_Activity_Object();
+                $object->setType($text);
+                return $object;
         }
     }
 
@@ -60,7 +70,7 @@ class DSSN_Activity_Object_Factory
         $nodes = $xpath->query('/activity:object/atom:title/text()');
         foreach ($nodes as $node) {
             $object->setName(strip_tags($node->wholeText));
-            
+
             if ($object instanceof DSSN_Activity_Object_Note) {
                 $object->setContent(strip_tags($node->wholeText));
             }
@@ -71,7 +81,7 @@ class DSSN_Activity_Object_Factory
         foreach ($nodes as $node) {
             $object->setIri(strip_tags($node->wholeText));
         }
-        
+
         return $object;
     }
 

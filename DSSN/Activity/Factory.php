@@ -192,6 +192,21 @@ EndOfTemplate;
             }
         }
 
+        // check for target (optional), use factory and set context to activity
+        if ($model->countSP($iri, DSSN_AAIR_activityContext) == 1) {
+            $contextIri   = $model->getValue($iri, DSSN_AAIR_activityContext);
+            if ($model->hasSP($contextIri, DSSN_RDF_type)) {
+                $context = DSSN_Resource::initFromType(
+                    $model->getValue($contextIri, DSSN_RDF_type)
+                );
+                $context->setIri($contextIri);
+                $context->fetchDirectImports($model);
+                $return->setObject($context);
+            } else {
+                throw new DSSN_Exception('need at least one rdf:type statement for '.$contextIri);
+            }
+        }
+
         // check for verb, use factory and set verb to activity
         if ($model->countSP( $iri, DSSN_AAIR_activityVerb) != 1) {
             throw new DSSN_Exception('need exactly ONE aair:activityVerb statement');
@@ -373,6 +388,12 @@ EndOfTemplate;
             $activity->setTitle(strip_tags($node->wholeText));
         }
 
+        // fetch published
+        $nodes = $xpath->query('/atom:entry/atom:published/text()');
+        foreach ($nodes as $node) {
+            $activity->setPublished(strip_tags($node->wholeText));
+        }
+
         // fetch verb
         $nodes = $xpath->query('/atom:entry/activity:verb/text()');
         foreach ($nodes as $node) {
@@ -392,6 +413,13 @@ EndOfTemplate;
         foreach ($nodes as $node) {
             $object = DSSN_Activity_Object_Factory::newFromDOMNode($node);
             $activity->setObject($object);
+        }
+
+        // fetch context
+        $nodes = $xpath->query('/atom:entry/activity:target');
+        foreach ($nodes as $node) {
+            $context = DSSN_Activity_Object_Factory::newFromDOMNode($node);
+            $activity->setContext($context);
         }
 
         return $activity;

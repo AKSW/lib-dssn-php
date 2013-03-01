@@ -13,6 +13,11 @@ class DSSN_Activity_Feed
     private $title = null;
 
     /*
+     * feed->updated
+     */
+    private $updated = null;
+
+    /*
      * feed->link rel=self
      */
     private $linkSelf = null;
@@ -131,6 +136,26 @@ class DSSN_Activity_Feed
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * Get updated.
+     *
+     * @return updated.
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set updated.
+     *
+     * @param updated the value to set.
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
     }
 
     /**
