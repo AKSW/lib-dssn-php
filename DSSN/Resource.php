@@ -8,6 +8,7 @@
 abstract class DSSN_Resource
 {
     private $iri = null;
+    private $type = null;
 
     public function __construct($iri = null) {
         DSSN_Utils::setConstants();
@@ -92,17 +93,25 @@ abstract class DSSN_Resource
         switch (get_class($this)) {
             case 'DSSN_Activity_Verb_Post':       return DSSN_AAIR_NS . 'Verb';
             case 'DSSN_Activity_Verb_Share':      return DSSN_AAIR_NS . 'Share';
+            case 'DSSN_Activity_Verb_MakeFriend': return DSSN_AAIR_NS . 'MakeFriend';
             case 'DSSN_Activity_Object_Note':     return DSSN_AAIR_NS . 'Note';
             case 'DSSN_Activity_Object_Bookmark': return DSSN_AAIR_NS . 'Bookmark';
+            case 'DSSN_Activity_Object_Photo':    return DSSN_AAIR_NS . 'Photo';
+            case 'DSSN_Activity_Object_Comment':  return DSSN_AAIR_NS . 'Comment';
             case 'DSSN_Activity_Actor_User':      return DSSN_AAIR_NS . 'User';
             case 'DSSN_Activity':                 return DSSN_AAIR_NS . 'Activity';
             default:
-                throw new DSSN_Exception('Unknown class type IRI of object class '
-                    . get_class($this) . '. Please add it to DSSN_Resource::getType.');
-                exit;
+                return $this->type;
         }
     }
 
+    /*
+     *  @param the URI string of the RDF type
+     */
+    public function setType($uri)
+    {
+        $this->type = $uri;
+    }
 
     /*
      * string representation is the IRI

@@ -1,23 +1,25 @@
 <?php
 /**
- * An activity object Bookmark
+ * An activity object Photo
  *
  * Bookmark - pointer to some URL -- typically a web page
  *
  * @author  {@link http://sebastian.tramp.name Sebastian Tramp}
- * @license http://sam.zoy.org/wtfpl/  Do What The Fuck You Want To Public License (WTFPL)
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  * @seeAlso http://xmlns.notu.be/aair/#term_Bookmark
  */
-class DSSN_Activity_Object_Bookmark extends DSSN_Activity_Object
+class DSSN_Activity_Object_Photo extends DSSN_Activity_Object
 {
-    private $thumbnail  = '';
-    private $label      = '';
+    private $largerImage = '';
+    private $thumbnail   = '';
+    private $label       = '';
 
     public function getTurtleTemplate()
     {
         /* default template only a rdf:type statement */
         $template  = <<<EndOfTemplate
             ?resource rdf:type ?type ;
+                aair:largerImage ?largerImage;
                 aair:thumbnail ?thumbnail;
                 rdfs:label ?label.
 EndOfTemplate;
@@ -29,15 +31,35 @@ EndOfTemplate;
         $vars['resource']  = $this->getIri();
         $vars['type']      = $this->getType();
         $vars['label']     = $this->getLabel();
+        $vars['largerImage'] = $this->getLargerImage();
         $vars['thumbnail'] = $this->getThumbnail();
         return $vars;
     }
 
     function getTypeLabel()
     {
-        return 'bookmark';
+        return 'photo';
     }
 
+    /**
+     * Get largerImage.
+     *
+     * @return largerImage.
+     */
+    function getLargerImage()
+    {
+        return $this->largerImage;
+    }
+
+    /**
+     * Set largerImage.
+     *
+     * @param largerImage the value to set.
+     */
+    function setLargerImage($largerImage)
+    {
+        $this->largerImage = $largerImage;
+    }
 
     /**
      * Get thumbnail.
@@ -81,6 +103,6 @@ EndOfTemplate;
 
     function getFeedType()
     {
-        return 'bookmark';
+        return 'photo';
     }
 }

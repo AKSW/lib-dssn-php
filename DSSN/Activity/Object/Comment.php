@@ -1,16 +1,17 @@
 <?php
 /**
- * An activity object Bookmark
+ * An activity object Comment
  *
  * Bookmark - pointer to some URL -- typically a web page
  *
  * @author  {@link http://sebastian.tramp.name Sebastian Tramp}
- * @license http://sam.zoy.org/wtfpl/  Do What The Fuck You Want To Public License (WTFPL)
- * @seeAlso http://xmlns.notu.be/aair/#term_Bookmark
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @seeAlso http://xmlns.notu.be/aair/#term_Comment
  */
-class DSSN_Activity_Object_Bookmark extends DSSN_Activity_Object
+class DSSN_Activity_Object_Comment extends DSSN_Activity_Object
 {
-    private $thumbnail  = '';
+    private $commenter  = '';
+    private $content  = '';
     private $label      = '';
 
     public function getTurtleTemplate()
@@ -18,7 +19,8 @@ class DSSN_Activity_Object_Bookmark extends DSSN_Activity_Object
         /* default template only a rdf:type statement */
         $template  = <<<EndOfTemplate
             ?resource rdf:type ?type ;
-                aair:thumbnail ?thumbnail;
+                aair:commenter ?commenter;
+                aair:content ?content;
                 rdfs:label ?label.
 EndOfTemplate;
         return $template;
@@ -29,34 +31,54 @@ EndOfTemplate;
         $vars['resource']  = $this->getIri();
         $vars['type']      = $this->getType();
         $vars['label']     = $this->getLabel();
-        $vars['thumbnail'] = $this->getThumbnail();
+        $vars['commenter'] = $this->getCommenter();
+        $vars['content']   = $this->getContent();
         return $vars;
     }
 
     function getTypeLabel()
     {
-        return 'bookmark';
+        return 'comment';
     }
 
-
     /**
-     * Get thumbnail.
+     * Get content.
      *
      * @return thumbnail.
      */
-    function getThumbnail()
+    function getContent()
     {
         return $this->thumbnail;
     }
 
     /**
-     * Set thumbnail.
+     * Set content.
      *
-     * @param thumbnail the value to set.
+     * @param content the value to set.
      */
-    function setThumbnail($thumbnail)
+    function setContent($content)
     {
-        $this->thumbnail = $thumbnail;
+        $this->content = $content;
+    }
+
+    /**
+     * Get content.
+     *
+     * @return thumbnail.
+     */
+    function getContent()
+    {
+        return $this->thumbnail;
+    }
+
+    /**
+     * Set commenter.
+     *
+     * @param commenter the value to set.
+     */
+    function setCommenter($commenter)
+    {
+        $this->commenter = $commenter;
     }
 
     /**
