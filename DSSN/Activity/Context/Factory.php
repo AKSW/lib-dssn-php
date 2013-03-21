@@ -31,9 +31,9 @@ class DSSN_Activity_Context_Factory
                 break;
 
             default:
-                $message = 'newFromFeedElementText: Unknown object ' . $text;
-                throw new DSSN_Exception($message);
-                break;
+                $context = new DSSN_Activity_Context();
+                $context->setType($text);
+                return $context;
         }
     }
 
@@ -52,9 +52,9 @@ class DSSN_Activity_Context_Factory
 
         // fetch context-type and create object of that
         $nodes = $xpath->query('/activity:target/activity:object-type/text()');
-        $object = null;
+        $context = null;
         foreach($nodes as $node) {
-            $object = DSSN_Activity_Context_Factory::newFromContextTypeString(strip_tags($node->wholeText));
+            $context = DSSN_Activity_Context_Factory::newFromContextTypeString(strip_tags($node->wholeText));
         }
 
         // fetch name

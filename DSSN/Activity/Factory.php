@@ -418,7 +418,7 @@ EndOfTemplate;
         // fetch context
         $nodes = $xpath->query('/atom:entry/activity:target');
         foreach ($nodes as $node) {
-            $context = DSSN_Activity_Object_Factory::newFromDOMNode($node);
+            $context = DSSN_Activity_Context_Factory::newFromDOMNode($node);
             $activity->setContext($context);
         }
 
